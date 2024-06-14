@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hypermarket Selling Price Calculator</title>
+</head>
+<body>
+    <h1>Hypermarket Selling Price Calculator</h1>
+    <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+        <?php
+            for ($i = 1; $i <= 10; $i++) {
+                echo "Product $i:<br>";
+                echo "Buying Price (KSH): <input type='number' name='buying_price[]' required><br>";
+            }
+        ?>
+        <br>
+        VAT (%): <input type="number" name="vat" value="16" required><br>
+        General Expenses (%): <input type="number" name="general_expenses" value="10" required><br>
+        Profit Margin (%): <input type="number" name="profit_margin" value="15" required><br>
+        <br>
+        <button type="submit">Calculate</button>
+    </form>
+    <?php
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $buying_prices = $_POST['buying_price'];
+            $vat = $_POST['vat'] / 100;
+            $general_expenses = $_POST['general_expenses'] / 100;
+            $profit_margin = $_POST['profit_margin'] / 100;
+
+            for ($i = 0; $i < 10; $i++) {
+                $general_expense = $buying_prices[$i] * $general_expenses;
+                $total_cost = $buying_prices[$i] + $general_expense;
+                $vat_amount = $total_cost * $vat;
+                $profit = $total_cost * $profit_margin;
+                $selling_price = $total_cost + $vat_amount + $profit;
+
+                echo "<br>Product " . ($i + 1) . ":<br>";
+                echo "  - VAT (KSH): " . number_format($vat_amount, 2) . "<br>";
+                echo "  - General Expense (KSH): " . number_format($general_expense, 2) . "<br>";
+                echo "  - Profit (KSH): " . number_format($profit, 2) . "<br>";
+                echo "  - Selling Price (KSH): " . number_format($selling_price, 2) . "<br>";
+            }
+        }
+    ?>
+</body>
+</html>
